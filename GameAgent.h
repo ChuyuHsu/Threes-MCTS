@@ -6,13 +6,16 @@
 class GameAgent
  {
  public:
-     GameAgent();
-     ~GameAgent();
+    GameAgent();
+    ~GameAgent();
     virtual bool reset();
     virtual bool init();
     virtual dir_e getAction(const Grid&, const char&); 
  private:
-     /* data */
+    class Game;
+    /* data */
  };
+
+
 
 #endif

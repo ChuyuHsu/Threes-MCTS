@@ -1,5 +1,7 @@
 #include "Threes.h"
 #include "GameAgent.h"
+#include "MonteCarloTreeSearch.h"
+
 #include <ctime>
 #ifdef _WIN32
 #include <conio.h>

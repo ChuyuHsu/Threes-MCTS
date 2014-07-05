@@ -2,6 +2,68 @@
 #include "GameAgentGame.h"
 
 
+/*************************************************
+                      Math
+*************************************************/
+// _pow3[i] = 3^(i+1) for i = 0 ~ (WHITE_TYPE_NUM - 1)
+int _pow3[WHITE_TYPE_NUM] = 
+{ 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441 };
+
+// _log2()
+// Description: base 2 log function for positive integers
+// Arguments:
+//     x  -  positive integer
+// Return Val: logarithm of x with respect to base 2
+int _log2(int x){
+    assert(x > 0);
+    int count = 0;
+    while(x >>= 1)  count++;
+    return count;
+}
+
+
+GameAgent::Game::Game(){
+    init();
+}
+
+GameAgent::Game::Game(Grid& grid) {
+    init();
+
+    m_grid.copy(grid);
+    m_grid_backup.copy(grid);
+}
+
+GameAgent::Game::~Game(){
+}
+
+void GameAgent::Game::reset(){
+    updateStats();
+    resetGrid();
+    m_gameOver = FALSE;
+    resetGrabBag();
+    setNextTile();
+        
+}
+
+void GameAgent::Game::init(){
+    m_nRound = 0;
+    m_moveCnt = 0;
+    m_score = 0;
+    m_maxScore = 0;
+    m_scoreSum = 0;
+    m_maxTile = 0;
+    memset(m_passCnt, 0, sizeof(m_passCnt));
+    m_gameOver = FALSE;
+    resetGrabBag();
+    setNextTile();
+
+    m_startTime = cpuTime();
+}
+
+void GameAgent::Game::resetGrid(){
+    m_grid.copy(m_grid_backup);
+}
+
 inline
 int GameAgent::Game::getRand(){
     return rand();
@@ -61,65 +123,8 @@ void GameAgent::Game::printGrid(int xPos, int yPos){
 }
 
 
-GameAgent::Game::Game(){
-    m_objCount++;
-    if(!m_objInit)
-        init();
-    m_objInit = TRUE;
-}
 
-GameAgent::Game::~Game(){
-    m_objCount--;
-    if(m_objCount == 0 && m_objInit){
-        m_endTime = cpuTime();
-        updateStats();
-        dumpLog("open_src_version.log");
-    }
-    else
-        updateStats();
-}
 
-void GameAgent::Game::reset(){
-    updateStats();
-    resetGrid();
-    m_gameOver = FALSE;
-    resetGrabBag();
-    setNextTile();
-        
-}
-
-void GameAgent::Game::init(){
-    m_nRound = 0;
-    m_moveCnt = 0;
-    m_score = 0;
-    m_maxScore = 0;
-    m_scoreSum = 0;
-    m_maxTile = 0;
-    memset(m_passCnt, 0, sizeof(m_passCnt));
-    m_gameOver = FALSE;
-    resetGrabBag();
-    setNextTile();
-
-    for(int i = 0;i < INITIAL_TILE_NUM;i++)
-        genInitTile();
-
-    m_startTime = cpuTime();
-}
-
-void GameAgent::Game::genInitTile(){
-    int randBlk = getRand() % m_grid.getEmptyBlkNo() + 1;
-    
-    for(int i = 0;i < GRID_SIZE;i++){             
-        if(m_grid[i] == EMPTY)
-            randBlk--;
-        if(randBlk == 0){
-            m_grid.setBlock(i, getNextTile());
-            setNextTile();
-            return;
-        }
-    }
-    assert(FALSE);
-}    
 
 void GameAgent::Game::genNewTile(){
     int nSlot = m_grid.getSlotNo();

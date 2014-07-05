@@ -17,6 +17,7 @@
 *.lib
 
 # Executables
+MCTS
 *.exe
 *.out
 *.app

@@ -11,9 +11,12 @@ class GameAgent
     virtual bool reset();
     virtual bool init();
     virtual dir_e getAction(const Grid&, const char&); 
- private:
+
+ protected: 
     class Game;
-    /* data */
+
+ private:
+        /* data */
  };
 
 

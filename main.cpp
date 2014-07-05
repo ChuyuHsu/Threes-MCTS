@@ -84,8 +84,8 @@ void PlayNRounds(int n){
             std::cout<<dirToStr(dir);
             myGame.printGrid(5,2);
 
-            ai.reset();
-            dir = ai.getAction(myGrid, myGame.getHint());
+            ai->reset();
+            dir = ai->getAction(myGrid, myGame.getHint());
 
             myGame.insertDirection(dir);
             gotoXY(50,0);
@@ -101,6 +101,7 @@ void PlayNRounds(int n){
         printf("  Score:    %d      \n", score);
  
     }
+    delete ai;
 }
 
 int main(int argc, char* argv[]){

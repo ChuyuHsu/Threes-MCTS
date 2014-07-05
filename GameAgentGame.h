@@ -5,22 +5,20 @@
 
 class GameAgent::Game{
     private:
-        static int   m_objCount;
-        static bool  m_objInit;
-
-        static Grid  m_grid;
-        static bool  m_gameOver;
-        static int   m_nRound;
-        static int   m_score;
-        static int   m_maxScore;
-        static int   m_scoreSum;
-        static int   m_maxTile;
-        static int   m_passCnt[STAGE_NUM];
-        static int   m_moveCnt;
-        static int   m_grabBag[BASIC_TYPE_NUM];
-        static int   m_nextTile;
-        static double   m_startTime;
-        static double   m_endTime;
+        Grid  m_grid;
+        Grid  m_grid_backup;
+        bool  m_gameOver;
+        int   m_nRound;
+        int   m_score;
+        int   m_maxScore;
+        int   m_scoreSum;
+        int   m_maxTile;
+        int   m_passCnt[STAGE_NUM];
+        int   m_moveCnt;
+        int   m_grabBag[BASIC_TYPE_NUM];
+        int   m_nextTile;
+        double   m_startTime;
+        double   m_endTime;
 
         // inline
         void  init();
@@ -29,7 +27,6 @@ class GameAgent::Game{
         void  resetGrabBag();
         void  resetGrid();
         
-        void  genInitTile();
         void  genNewTile();
         void  setNextTile();
         int   getNextTile();
@@ -37,6 +34,7 @@ class GameAgent::Game{
         void  setGameOver();
     public:
         Game();
+        Game(Grid&);
         ~Game();
         void  reset();
 

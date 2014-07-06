@@ -6,11 +6,11 @@
 class GameAgent
  {
  public:
-    GameAgent();
-    ~GameAgent();
-    virtual bool reset();
-    virtual bool init();
-    virtual dir_e getAction(const Grid&, const char&); 
+    GameAgent(){};
+    virtual ~GameAgent(){};
+    virtual bool reset() = 0;
+    virtual bool init() = 0;
+    virtual dir_e getAction(Grid&, char) = 0; 
 
  protected: 
     class Game;

@@ -71,20 +71,20 @@ void PlayNRounds(int n){
     myGame.printGrid(35,2);
 
     if(myGame.isGameOver(score))  myGame.reset();
-
+  
+    GameAgent* ai = new MonteCarloTreeSearch();  
     Grid myGrid;
-    
-    GameAgent* ai = new MonteCarloTreeSearch();
-     
+
     for(int i = 0;i < n;i++){    
         isGameOver = false;
         while(!isGameOver){
-            while((dir = getDirFromKeyboard()) == INVALID);
+            //while((dir = getDirFromKeyboard()) == INVALID);
             gotoXY(5,10);
-            std::cout<<dirToStr(dir);
+            //std::cout<<dirToStr(dir);
             myGame.printGrid(5,2);
 
             ai->reset();
+            myGame.getCurrentGrid(myGrid);
             dir = ai->getAction(myGrid, myGame.getHint());
 
             myGame.insertDirection(dir);

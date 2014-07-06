@@ -1,51 +1,47 @@
 #include "GameAgent.h"
 #include "GameAgentGame.h"
 
-
-/*************************************************
-                      Math
-*************************************************/
-// _pow3[i] = 3^(i+1) for i = 0 ~ (WHITE_TYPE_NUM - 1)
-int _pow3[WHITE_TYPE_NUM] = 
-{ 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441 };
-
-// _log2()
-// Description: base 2 log function for positive integers
-// Arguments:
-//     x  -  positive integer
-// Return Val: logarithm of x with respect to base 2
-int _log2(int x){
-    assert(x > 0);
-    int count = 0;
-    while(x >>= 1)  count++;
-    return count;
-}
-
+int _log2(int);
 
 GameAgent::Game::Game(){
     init();
 }
 
-GameAgent::Game::Game(Grid& grid) {
+GameAgent::Game::Game(GameAgent::Game* parent) {
     init();
+    this->copy(parent);
+    this->backup = parent;
+}
 
+GameAgent::Game::Game(Grid& grid, char& hint){
+    init();
     m_grid.copy(grid);
-    m_grid_backup.copy(grid);
 }
 
 GameAgent::Game::~Game(){
 }
 
 void GameAgent::Game::reset(){
-    updateStats();
-    resetGrid();
-    m_gameOver = FALSE;
-    resetGrabBag();
-    setNextTile();
-        
+    if(backup)
+        this->copy(backup); 
+}
+
+void GameAgent::Game::copy(GameAgent::Game* parent){
+    this->m_grid.copy(parent->m_grid);
+    this->m_gameOver = parent->m_gameOver;
+    this->m_nRound = parent->m_nRound;
+    this->m_moveCnt = parent->m_moveCnt;
+    this->m_score = parent->m_score;
+    this->m_scoreSum = parent->m_scoreSum;
+    this->m_maxScore = parent->m_maxScore;
+    this->m_maxTile = parent->m_maxTile;
+    this->m_nextTile = parent->m_nextTile;
+    memcpy(this->m_passCnt, parent->m_passCnt, STAGE_NUM);
+    memcpy(this->m_grabBag, parent->m_grabBag, BASIC_TYPE_NUM);
 }
 
 void GameAgent::Game::init(){
+    backup = NULL;
     m_nRound = 0;
     m_moveCnt = 0;
     m_score = 0;
@@ -60,27 +56,19 @@ void GameAgent::Game::init(){
     m_startTime = cpuTime();
 }
 
-void GameAgent::Game::resetGrid(){
-    m_grid.copy(m_grid_backup);
-}
-
-inline
 int GameAgent::Game::getRand(){
     return rand();
 }
 
-inline
 int GameAgent::Game::getNextTile(){
     return m_nextTile;
 }
 
-inline
 char GameAgent::Game::getHint(){
     if(m_nextTile < BONUS_BASE)  return m_nextTile + '0';
     return '+';
 }
 
-inline
 bool GameAgent::Game::isGameOver(int& score){
     if(m_gameOver){
         score = m_score;
@@ -92,18 +80,17 @@ bool GameAgent::Game::isGameOver(int& score){
     }
 }
 
-inline
 int GameAgent::Game::getMaxScore(){
     return m_maxScore;
 }
 
-inline
 void GameAgent::Game::resetGrabBag(){
     m_grabBag[0] = m_grabBag[1] = m_grabBag[2] = BAG_SIZE / BASIC_TYPE_NUM;
 }
 
-inline
 bool GameAgent::Game::insertDirection(dir_e dir){
+    //m_grid.print(200,50); 
+    //std::cout << std::endl << dir  << std::endl;
     if(!m_grid.shift(dir))  return FALSE;
 
     genNewTile();
@@ -112,17 +99,13 @@ bool GameAgent::Game::insertDirection(dir_e dir){
     return TRUE;
 }
 
-inline
 void GameAgent::Game::getCurrentGrid(Grid& currGrid){
     currGrid.copy(m_grid);
 }
 
-inline
 void GameAgent::Game::printGrid(int xPos, int yPos){
     m_grid.print(xPos, yPos);
 }
-
-
 
 
 
@@ -199,6 +182,5 @@ void GameAgent::Game::setGameOver(){
     m_gameOver = TRUE;
     m_score = m_grid.getScore();
 }
-
 
 

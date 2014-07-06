@@ -1,111 +1,95 @@
+#include <float.h>
 #include "MonteCarloTreeSearch.h"
 #include "MonteCarloTreeSearchNode.h"
 
+
 MonteCarloTreeSearch::Node::Node()
 {
-	wins = 0;
 	visits = 0;
 	move = -1;
-	player = 0;
 	parent = NULL;
 	child = NULL;
 	sibling = NULL;
 	games = 0;
+    score = 0;
   
 }
 
-MonteCarloTreeSearch::Node::Node(Node* _parent, const HexGrid& _state, int _move, int _turn)
+MonteCarloTreeSearch::Node::Node(Node* _parent, Game& _state, int _move)
 {
 	parent = _parent;
-	state = _state;
-	
+	state.copy(&_state);
     move = _move;
-	player = _turn;
-	
-	wins = 0;
+	score = 0;
 	visits = 0;
 	games = 0;
 	child = NULL;
 	sibling = NULL;
 }
 
-double MonteCarloTreeSearch::Node::getWinRate()
+
+void MonteCarloTreeSearch::Node::backpropagation()
 {
-	if(visits != 0)
-	{
-		return (double) wins / (double) games;
-	}
-	else 
-		return 0;
+	if(parent != NULL)
+		parent->backpropagation(this->score, this->games);
 }
 
-void MonteCarloTreeSearch::Node::backpropagation(int _wins, int _games)
+void MonteCarloTreeSearch::Node::backpropagation(int _score, int _games)
 {
-	games += _games;
-	wins += _wins;
-	
+    score += _score;
+    games += _games;
+
 	if(parent != NULL)
-		parent->backpropagation(_wins, _games);
+		parent->backpropagation(_score, _games);
 }
 
 void MonteCarloTreeSearch::Node::createChildren()
 {
 	if(child != NULL) return;
 	
-	int width = this->state.getGridWidth();
-	int height = this->state.getGridHeight();
 	
-	
-	Node* last = NULL;
-	for(int i = 0; i < height; i++)
-	{
-		for(int j = 0; j < width; j++)
-		{
-			
-			if(state.getCellState(i, j) == T_EMPTY)
-			{
-				int position = i*width+j;
-				int _turn = (player == T_BLACK) ? T_WHITE : T_BLACK;
-				
-				HexGrid newState; 
-			    newState = this->state;
-				newState.setStone(position, player);
+	Node* last = this->child;
 
-				
-				Node* newNode = new Node(this, newState, position, _turn);
-				if(last == NULL){
-					this->child = newNode;
-					// std::cout << newNode->move;
-				}
-				else
-					last->sibling = newNode;
-				last = newNode;
-			}
-		}
-	}
+    for (int i = 0; i < 4; i++) {
+        GameAgent::Game*  childGame = new GameAgent::Game(state);
+        if(!childGame->insertDirection( (dir_e)i) )
+        {
+            delete childGame;
+            continue;
+        }
+        
+        Node* newNode = new Node(this, *childGame, i);
+        
+        if(last == NULL){
+           this->child = newNode;
+            // std::cout << newNode->move;
+        }
+        else
+            last->sibling = newNode;
+        last = newNode;
+    }
+
 }
 
-Node* MonteCarloTreeSearch::Node::selection()
+MonteCarloTreeSearch::Node* MonteCarloTreeSearch::Node::selection()
 {
 	visits++;
-	Node* result = NULL;
-	Node* next = this->child;
-	std::cout << std::setw(3) << this->move;
+    //std::cout << "MOVE:" << this->move << std::endl;
+    MonteCarloTreeSearch::Node* result = NULL;
+    MonteCarloTreeSearch::Node* next = this->child;
+	//std::cout << std::setw(3) << this->move;
 	double best_uct = -100000;
 	while(next != NULL)
 	{
 		double uctvalue = 0;
 		if(next->visits > 0)
 		{
-			double winRate = next->getWinRate();
-			if(player == T_BLACK) winRate = 1 - winRate;
-			double uct = UCKT * sqrt( log(this->games) / next->games );
-			uctvalue = winRate + uct; 
+			uctvalue = this->getUCTValue(next); 
 		}
 		else
 		{
 			MyRand random;
-			uctvalue = 50000 + 1000 * random.uniform();
+			uctvalue = DBL_MAX;
 		}
         
 		if(uctvalue > best_uct)
@@ -128,28 +112,57 @@ void MonteCarloTreeSearch::Node::expansion()
 	createChildren();
 }
 
-int MonteCarloTreeSearch::Node::simulation(int _games)
+double MonteCarloTreeSearch::Node::simulation(int _games)
 {
-	int wins = 0;
+	//double score = 0;
 	for(int i = 0; i < _games; i++)
 	{
-		wins += (int) state.simulation(player);
+        this->state.reset();
+        score += this->randomPlay();
+        //std::cout << "Score:" << score << std::endl;
 	}
-	return wins;
+    games += _games;
+	return (double) score / _games;
+}
+
+int MonteCarloTreeSearch::Node::randomPlay(){
+    int i,score = 0;
+    bool dir[4] = {1,1,1,1}; 
+    bool b = false;
+    //state.printGrid(70,30);
+    while (!state.isGameOver(score)) {
+        dir_e move = (dir_e)random.uniformInt(0, 3);
+        
+        b = state.insertDirection(move);
+       
+       // if(b)
+       //     std::cin.ignore();
+        
+
+    }
+    //std::cout << "SCORE:"<<score << std::endl;
+    return score;
 }
 
 int MonteCarloTreeSearch::Node::finalDecision()
 {
 	Node* next = this->child;
 	Node* result = this;
-	
-	double best_winRate = 0;
+    std::cout << "MOVE:" << this->move << std::endl;
+	double bestScore = 0;
 	while(next != NULL)
 	{
-		double winRate = next->getWinRate();
-		if(winRate > best_winRate)
+	    //std::cout << "MOVE:" << next->move 
+        //            << ", Score: " << next->getScoreMean() 
+        //            << ", visits:" << next->visits
+        //            << ", score:" << next->score
+        //            << ", games:" << next->games
+        //            << std::endl;
+       
+		double score = next->getScoreMean();
+		if(score > bestScore)
 		{
-			best_winRate = winRate;
+			bestScore = score;
 			result = next;
 		}
 		next = next->sibling;
@@ -158,6 +171,24 @@ int MonteCarloTreeSearch::Node::finalDecision()
 	return result->move;
 }
 
+#define C 1
+#define D 1
+double MonteCarloTreeSearch::Node::getUCTValue(Node* c){
 
+    double mean = score / games;
+    double exploration = 2 * C * sqrt(log(this->games)/c->games);
+    //double deviation = sqrt( (c->getVariance() + D) / c->games );
 
+    return mean + exploration;
+}
 
+double MonteCarloTreeSearch::Node::getScoreMean(){
+    if(visits > 0)
+        return (double)score / games;
+    else 
+        return 0.0;
+}
+
+int MonteCarloTreeSearch::Node::getTimes(){
+    return (int)this->games;
+}

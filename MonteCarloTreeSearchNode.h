@@ -4,6 +4,8 @@
 #include <iomanip>
 #include "Threes.h"
 #include "MonteCarloTreeSearch.h"
+#include "GameAgentGame.h"
+#include "myrand.h"
 
 #ifndef __NODE_H
 	#define __NODE_H
@@ -13,25 +15,32 @@ class MonteCarloTreeSearch::Node
 {
 public:
    Node();
-   Node(Node* parent, Grid& state, int move, int _turn);
+   Node(Node* _parent, GameAgent::Game& _state, int _move);
 
-   uint wins;
+   void backpropagation();
+   Node* selection();
+   double simulation(int _games);
+   int finalDecision();
+   void expansion();
+   int getTimes();
+protected:   
+   virtual double getScoreMean();
+   virtual double getUCTValue(Node*);
+   virtual void createChildren();
+
    uint games;
    uint visits;
+   uint score;
    int move;
-   int player; // either T_BLACK or T_WHITE
-   Grid state;
+   GameAgent::Game state;
    Node* parent;
    Node* child;
    Node* sibling;
 
-   double getWinRate();
-   void backpropagation(int _wins, int _games);
-   void createChildren();
-   Node* selection();
-   void expansion();
-   int simulation(int _games);
-   int finalDecision();
+private:
+   void backpropagation(int _score, int _games);
+   int randomPlay();
+   MyRand random;
 };
 
 #endif

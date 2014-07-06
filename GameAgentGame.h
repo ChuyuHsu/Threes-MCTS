@@ -5,8 +5,8 @@
 
 class GameAgent::Game{
     private:
+        GameAgent::Game* backup;
         Grid  m_grid;
-        Grid  m_grid_backup;
         bool  m_gameOver;
         int   m_nRound;
         int   m_score;
@@ -25,16 +25,17 @@ class GameAgent::Game{
         int   getRand();
         int   getMaxScore();         
         void  resetGrabBag();
-        void  resetGrid();
-        
+       
+        int   getNextTile();
         void  genNewTile();
         void  setNextTile();
-        int   getNextTile();
+        void  setNextTile(int&);
         void  updateStats();
         void  setGameOver();
     public:
         Game();
-        Game(Grid&);
+        Game(Grid&, char&);
+        Game(GameAgent::Game* parent);
         ~Game();
         void  reset();
 
@@ -44,6 +45,7 @@ class GameAgent::Game{
         bool  insertDirection(dir_e dir);
         bool  isGameOver(int& score);
         void  printGrid(int xPos, int yPos);
+        void  copy(GameAgent::Game* p);
 };
 
 

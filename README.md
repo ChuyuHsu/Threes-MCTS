@@ -27,4 +27,4 @@ Only covers the .h header files, but include coresponsing .cpp files
 
 [Monte-Carlo Tree Search]: http://en.wikipedia.org/wiki/Monte-Carlo_tree_search
 [Taiwan 2048 Bot]: http://2048-botcontest.twbbs.org
-[Dr.Yu]: http://teilab.ee.ntu.edu.tw
+[Dr. Yu]: http://teilab.ee.ntu.edu.tw

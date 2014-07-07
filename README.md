@@ -14,8 +14,7 @@ Under the time constriant, the number of simulation is way too small.
 
 File Description: 
 ----
-
-(only cover the .h header files, but include coresponsing .cpp files )
+Only covers the .h header files, but include coresponsing .cpp files 
 
   - Threes.h are provided by the competition organizer
   - myrand.h, statistics.h and mt19937ar.h are from [Dr. Yu]

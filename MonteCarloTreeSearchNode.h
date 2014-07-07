@@ -16,7 +16,8 @@ class MonteCarloTreeSearch::Node
 public:
    Node();
    Node(Node* _parent, GameAgent::Game& _state, int _move);
-
+   virtual ~Node();
+   
    void backpropagation();
    Node* selection();
    double simulation(int _games);

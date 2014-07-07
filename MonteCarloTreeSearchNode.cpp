@@ -19,12 +19,22 @@ MonteCarloTreeSearch::Node::Node(Node* _parent, Game& _state, int _move)
 {
 	parent = _parent;
 	state.copy(&_state);
+    //state.printGrid(150,30);
     move = _move;
+
 	score = 0;
 	visits = 0;
 	games = 0;
 	child = NULL;
 	sibling = NULL;
+}
+
+MonteCarloTreeSearch::Node::~Node(){
+    if(this->sibling)
+        delete this->sibling;
+    if(this->child)
+        delete this->child;
+
 }
 
 
@@ -47,11 +57,10 @@ void MonteCarloTreeSearch::Node::createChildren()
 {
 	if(child != NULL) return;
 	
-	
 	Node* last = this->child;
 
     for (int i = 0; i < 4; i++) {
-        GameAgent::Game*  childGame = new GameAgent::Game(state);
+        GameAgent::Game*  childGame = new GameAgent::Game(&state);
         if(!childGame->insertDirection( (dir_e)i) )
         {
             delete childGame;
@@ -74,7 +83,7 @@ void MonteCarloTreeSearch::Node::createChildren()
 MonteCarloTreeSearch::Node* MonteCarloTreeSearch::Node::selection()
 {
 	visits++;
-    //std::cout << "MOVE:" << this->move << std::endl;
+    //std::cout << std::endl << "MOVE:" << this->move << std::endl;
     MonteCarloTreeSearch::Node* result = NULL;
     MonteCarloTreeSearch::Node* next = this->child;
 	//std::cout << std::setw(3) << this->move;
@@ -119,7 +128,7 @@ double MonteCarloTreeSearch::Node::simulation(int _games)
 	{
         this->state.reset();
         score += this->randomPlay();
-        //std::cout << "Score:" << score << std::endl;
+        //std::cout << "Simulation Score:" << score << std::endl;
 	}
     games += _games;
 	return (double) score / _games;
@@ -148,8 +157,8 @@ int MonteCarloTreeSearch::Node::finalDecision()
 {
 	Node* next = this->child;
 	Node* result = this;
-    std::cout << "MOVE:" << this->move << std::endl;
-	double bestScore = 0;
+    //std::cout << "MOVE:" << this->move << std::endl;
+	double bestScore = -DBL_MAX;
 	while(next != NULL)
 	{
 	    //std::cout << "MOVE:" << next->move 
@@ -171,7 +180,7 @@ int MonteCarloTreeSearch::Node::finalDecision()
 	return result->move;
 }
 
-#define C 1
+#define C 5
 #define D 1
 double MonteCarloTreeSearch::Node::getUCTValue(Node* c){
 

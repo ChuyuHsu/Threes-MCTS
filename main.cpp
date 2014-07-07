@@ -107,8 +107,8 @@ void PlayNRounds(int n){
 int main(int argc, char* argv[]){
     // Note: API function calls performed by any 'Game' object effects the same set of static class members,
     // so even through the 2 following function calls use different 'Game' objects, the same game continues
-    PlayNRounds(50);
-    PlayNRounds(50);
+    PlayNRounds(0);
+    PlayNRounds(1);
     return 0;
 }
 

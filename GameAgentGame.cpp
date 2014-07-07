@@ -10,7 +10,8 @@ GameAgent::Game::Game(){
 GameAgent::Game::Game(GameAgent::Game* parent) {
     init();
     this->copy(parent);
-    this->backup = parent;
+    this->backup = NULL;
+    //std::cout << "p: " << parent << "b:" << backup << std::endl;
 }
 
 GameAgent::Game::Game(Grid& grid, char& hint){
@@ -19,6 +20,8 @@ GameAgent::Game::Game(Grid& grid, char& hint){
 }
 
 GameAgent::Game::~Game(){
+    //std::cout << "this " << this <<  " b:" << backup << std::endl;
+    delete backup;
 }
 
 void GameAgent::Game::reset(){
@@ -38,6 +41,8 @@ void GameAgent::Game::copy(GameAgent::Game* parent){
     this->m_nextTile = parent->m_nextTile;
     memcpy(this->m_passCnt, parent->m_passCnt, STAGE_NUM);
     memcpy(this->m_grabBag, parent->m_grabBag, BASIC_TYPE_NUM);
+
+    this->backup = parent;
 }
 
 void GameAgent::Game::init(){

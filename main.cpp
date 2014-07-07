@@ -108,7 +108,7 @@ int main(int argc, char* argv[]){
     // Note: API function calls performed by any 'Game' object effects the same set of static class members,
     // so even through the 2 following function calls use different 'Game' objects, the same game continues
     PlayNRounds(0);
-    PlayNRounds(1);
+    PlayNRounds(100);
     return 0;
 }
 

@@ -17,6 +17,9 @@ GameAgent::Game::Game(GameAgent::Game* parent) {
 GameAgent::Game::Game(Grid& grid, char& hint){
     init();
     m_grid.copy(grid);
+    if(hint != 0)
+        if(hint != '+')
+            setNextTile(hint - '0');
 }
 
 GameAgent::Game::~Game(){
@@ -38,7 +41,7 @@ void GameAgent::Game::copy(GameAgent::Game* parent){
     this->m_scoreSum = parent->m_scoreSum;
     this->m_maxScore = parent->m_maxScore;
     this->m_maxTile = parent->m_maxTile;
-    this->m_nextTile = parent->m_nextTile;
+    this->setNextTile();
     memcpy(this->m_passCnt, parent->m_passCnt, STAGE_NUM);
     memcpy(this->m_grabBag, parent->m_grabBag, BASIC_TYPE_NUM);
 
@@ -132,6 +135,10 @@ void GameAgent::Game::setNextTile(){
         int tileType;
         int nTile = m_grabBag[0] + m_grabBag[1] + m_grabBag[2];
         assert(nTile > 0);
+        if(nTile == 0) {
+            resetGrabBag();
+            nTile = m_grabBag[0] + m_grabBag[1] + m_grabBag[2];
+        }
         int randTile = getRand() % nTile;
         if(randTile < m_grabBag[0]){
             m_grabBag[0]--;
@@ -149,6 +156,13 @@ void GameAgent::Game::setNextTile(){
             resetGrabBag();
         m_nextTile = tileType;
     }
+}
+
+void GameAgent::Game::setNextTile(int tileType){
+    m_nextTile = tileType;
+    m_grabBag[tileType]--;
+    if(m_grabBag[0] + m_grabBag[1] + m_grabBag[2] == 0)
+        resetGrabBag();
 }
 
 void GameAgent::Game::updateStats(){

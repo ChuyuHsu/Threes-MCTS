@@ -29,7 +29,7 @@ class GameAgent::Game{
         int   getNextTile();
         void  genNewTile();
         void  setNextTile();
-        void  setNextTile(int&);
+        void  setNextTile(int);
         void  updateStats();
         void  setGameOver();
     public:

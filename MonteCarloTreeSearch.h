@@ -5,7 +5,7 @@
 #include "GameAgent.h"
 
 #define SIMULATION_TIMES 100
-#define TIMELIMIT 0.02
+#define TIMELIMIT 0.2
 class MonteCarloTreeSearch : public GameAgent
 {
 public:

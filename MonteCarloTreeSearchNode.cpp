@@ -127,7 +127,9 @@ double MonteCarloTreeSearch::Node::simulation(int _games)
 	for(int i = 0; i < _games; i++)
 	{
         this->state.reset();
-        score += this->randomPlay();
+        r = this->randomPlay();
+        score += r;
+        sta.record(r);
         //std::cout << "Simulation Score:" << score << std::endl;
 	}
     games += _games;

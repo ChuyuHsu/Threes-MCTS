@@ -7,8 +7,12 @@ In this project, the threes! agent uses the monte-carlo tree search with UCT for
 In the meantime, the other member is implementing a expeciminimax algorithm which has outperformed this MCTS algorithm.
 
 Under the time constriant, the number of simulation is way too small. 
+
+To-do list
+----
   * Accelarate the simulation process
   * Improve the original UCT algorithm
+  * Unit testing for each component
 
 
 

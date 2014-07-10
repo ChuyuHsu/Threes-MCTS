@@ -20,10 +20,10 @@ bool MonteCarloTreeSearch::reset() {
 
 dir_e MonteCarloTreeSearch::getAction(Grid& grid, char hint) {
     int i;
-    std::cout << "MCTS initialized" << std::endl;
-    GameAgent::Game game(grid, hint);
-    game.printGrid(50,30);
-    Node* root = new Node(NULL, game, -1);
+    //std::cout << "MCTS initialized" << std::endl;
+    GameAgent::Game* game = new GameAgent::Game(grid, hint);
+    //game->printGrid(50,30);
+    Node* root = new Node(NULL, *game, -1);
 	
 	//root->state.dumpGrid();
 	//root.search();
@@ -50,7 +50,8 @@ dir_e MonteCarloTreeSearch::getAction(Grid& grid, char hint) {
 	}
 	
 	dir_e output = (dir_e)root->finalDecision();
-	std::cout << "Total game Simulated " << root->getTimes() << "! \n";	
+	std::cout << "\nTotal game Simulated " << root->getTimes() << "! \n";	
+    delete root;
 	return output;
 }
 

@@ -6,6 +6,7 @@
 #include "MonteCarloTreeSearch.h"
 #include "GameAgentGame.h"
 #include "myrand.h"
+#include "statistics.h"
 
 #ifndef __NODE_H
 	#define __NODE_H
@@ -16,7 +17,8 @@ class MonteCarloTreeSearch::Node
 public:
    Node();
    Node(Node* _parent, GameAgent::Game& _state, int _move);
-
+   virtual ~Node();
+   
    void backpropagation();
    Node* selection();
    double simulation(int _games);
@@ -28,6 +30,7 @@ protected:
    virtual double getUCTValue(Node*);
    virtual void createChildren();
 
+   Statistics sta;
    uint games;
    uint visits;
    uint score;

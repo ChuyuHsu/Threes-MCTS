@@ -124,6 +124,7 @@ void MonteCarloTreeSearch::Node::expansion()
 double MonteCarloTreeSearch::Node::simulation(int _games)
 {
 	//double score = 0;
+    int r=0;
 	for(int i = 0; i < _games; i++)
 	{
         this->state.reset();

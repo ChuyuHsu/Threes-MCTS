@@ -6,7 +6,7 @@
 #include "MonteCarloTreeSearch.h"
 #include "GameAgentGame.h"
 #include "myrand.h"
-#include "statisics.h"
+#include "statistics.h"
 
 #ifndef __NODE_H
 	#define __NODE_H
@@ -30,7 +30,7 @@ protected:
    virtual double getUCTValue(Node*);
    virtual void createChildren();
 
-   Statisics sta;
+   Statistics sta;
    uint games;
    uint visits;
    uint score;

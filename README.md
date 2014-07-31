@@ -3,7 +3,7 @@ Threes-MCTS
 
 Threes! AI with [Monte-Carlo Tree Search]. 
 This project is for [Taiwan 2048 Bot] competition.
-In this project, the threes! agent uses the monte-carlo tree search with UCT for the first trial.
+In this project, the threes! agent uses the monte-carlo tree search with UCT as the first trial.
 In the meantime, the other member is implementing a expeciminimax algorithm which has outperformed this MCTS algorithm.
 
 Under the time constriant, the number of simulation is way too small. 
